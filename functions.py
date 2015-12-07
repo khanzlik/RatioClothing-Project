@@ -14,6 +14,7 @@ GradientBoostingClassifier
 diabetes = datasets.load_diabetes()
 X = diabetes['data']
 y = diabetes['target']
+
 def linear_regression(X, y):
 	X_train, X_test, y_train, y_test = train_test_split(X, y,\
 		random_state=1)
@@ -24,8 +25,13 @@ def linear_regression(X, y):
 	np.mean((model.predict(X_test) - y_test) ** 2)))
 	print('Variance score: {}'.format(model.score(X_test, y_test)))
 
-# PCA
+# Standardizing Data 
+def standardize(X):
+	for i in X:
+		X = (i - np.mean(X))/np.std(X)
+		return X
 
+# PCA
 X = StandardScaler().fit_transform(diabetes.data)
 pca = PCA()
 pca.fit(X)
