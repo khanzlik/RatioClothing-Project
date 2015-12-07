@@ -68,6 +68,5 @@ def scree_plot(pca, title=None):
     # plt.show()
 
 X_transform = pca.transform(X)
-# apply this X_transform to linear regression now
-
+# linear_regression(X_transform, y)
 
