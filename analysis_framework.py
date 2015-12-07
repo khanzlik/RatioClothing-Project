@@ -89,3 +89,10 @@ def scree_plot(pca, title=None):
 #np.cumsum(pca.explained_variance_ratio_)
 
 X_transform = pca.transform(X)
+# apply this X_transform to linear regression now
+# linear_regression(X_transform, y)
+# Coefficients: [-21.46555352 -12.18646095  11.33141471  29.15276267  -0.43853856
+#  10.41901241   5.63232952   3.947253     0.55600835  32.64848419]
+# Residual sum of squares: 2903.10000132
+# Variance score: 0.443974132651
+# Same MSE/Variance, completely different coefficients? 
