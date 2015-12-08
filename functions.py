@@ -5,15 +5,11 @@ import seaborn as sns
 from sklearn import datasets, linear_model
 from sklearn.cross_validation import train_test_split,\
 cross_val_score
-from sklearn.preprocessing import StandardScaler
+from sklearn import preprocessing
 from sklearn.decomposition import PCA
 from sklearn.linear_model import Ridge, Lasso
 from sklearn.ensemble import RandomForestClassifier,\
 GradientBoostingClassifier
-
-diabetes = datasets.load_diabetes()
-X = diabetes['data']
-y = diabetes['target']
 
 def linear_regression(X, y):
 	X_train, X_test, y_train, y_test = train_test_split(X, y,\
@@ -32,10 +28,15 @@ def standardize(X):
 		return X
 
 # PCA
-X = StandardScaler().fit_transform(diabetes.data)
-pca = PCA()
-pca.fit(X)
-pca.explained_variance_ratio_
+
+# data = diabetes.data
+# def pca(data):
+#     X = StandardScaler().fit_transform(data)
+#     pca = PCA()
+#     pca.fit(X)
+#     pca.explained_variance_ratio_
+#     X_transform = pca.transform(X)
+#     return X_transform, pca
 
 def scree_plot(pca, title=None):
     num_components = pca.n_components_
@@ -59,7 +60,6 @@ def scree_plot(pca, title=None):
     
     ax.set_xticklabels(ind, 
                        fontsize=12)
-
     ax.set_ylim(0, max(vals)+0.05)
     ax.set_xlim(0-0.45, 8+0.45)
 
@@ -71,8 +71,51 @@ def scree_plot(pca, title=None):
 
     if title is not None:
         plt.title(title, fontsize=16)
-    # plt.show()
 
-X_transform = pca.transform(X)
-# linear_regression(X_transform, y)
+def ridge(X_transform, y):
+  dummy_arr = []
+  for i,a in enumerate(alphas):
+    fit = Ridge(alpha=a, normalize=True).fit(X_transform, y)
+    params[i] = fit.coef_
+    dummy_arr.append(((fit.predict(X_transform) - y)**2)\
+      .mean())
+  for param in params.T:
+    plt.plot(alphas, param)
+    plt.show()
 
+def lasso(X_transform, y):
+  alphas, _, coefs = linear_model.lars_path(X, y,\
+    method='lasso', verbose=True)
+
+
+if __name__=='__main__':
+  diabetes = datasets.load_diabetes()
+  X = diabetes['data']
+  y = diabetes['target']
+
+  linear_regression(X, y)
+  # X = standardize(X)
+
+  X = preprocessing.StandardScaler().fit_transform(diabetes.data)
+  pca = PCA()
+  pca.fit(X)
+  pca.explained_variance_ratio_
+
+  scree_plot(pca)
+  # plt.show()
+  X_transform = pca.transform(X)
+  # linear_regression(X_transform, y)
+
+  k = X_transform.shape[1]
+  alphas = np.logspace(-5, 5)
+  params = np.zeros((len(alphas), k))
+  train_MSE = np.zeros((len(alphas)))
+  test_MSE = np.zeros((len(alphas)))
+
+  ridge(X_transform, y)
+  # fit.score(X_transform, y)
+  plt.plot(np.log10(alphas), train_MSE, color = 'b', label = "Training Ridge Set")
+
+
+# Standardizing right? Or should I do a function?
+# Do I use X_train/y_train in PCA/ridge/lasso?
