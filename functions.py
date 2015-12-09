@@ -81,12 +81,12 @@ def lasso(X, y, alphas):
 def random_forest(X_train, y_train, num_trees=10):
   model = RandomForestRegressor(n_estimators=num_trees,\
     oob_score=True)
-  model.fit(X_transform, y)
+  model.fit(X_train, y_train)
   return model
 
 def gradient(X_train, y_train):
   model = GradientBoostingRegressor()
-  model.fit(X_transform, y)
+  model.fit(X_train, y_train)
   return model
 
 
@@ -121,13 +121,13 @@ if __name__=='__main__':
   lasso_model = lasso(X_train, y_train, alphas)
 
   ridge_perf = mse(y_test, ridge_model.predict(X_test))
-  lasso_per = mse(y_test, lasso_model.predict(X_test))
+  lasso_perf = mse(y_test, lasso_model.predict(X_test))
 
-  # rf_model = random_forest(X_train, y_train)
-  # gradient_model = gradient(X_train, y_train)
+  rf_model = random_forest(X_train, y_train)
+  gradient_model = gradient(X_train, y_train)
 
-  # rf_perf = mse(X_test, rf_mdoel.predict(X_test))
-  # gradient_model = mse(X_test, gradient_model.predict(X_test))
+  rf_perf = mse(y_test, rf_model.predict(X_test))
+  gradient_perf = mse(y_test, gradient_model.predict(X_test))
 
   # models, labels = [], []
   # models.append(linear_regression(X_transform, y))
