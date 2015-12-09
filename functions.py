@@ -8,36 +8,20 @@ cross_val_score
 from sklearn import preprocessing
 from sklearn.decomposition import PCA
 from sklearn.linear_model import Ridge, Lasso
-from sklearn.ensemble import RandomForestClassifier,\
-GradientBoostingClassifier
+from sklearn.ensemble import RandomForestRegressor,\
+GradientBoostingRegressor
+from sklearn.metrics import mean_squared_error as mse
 
 def linear_regression(X, y):
-	X_train, X_test, y_train, y_test = train_test_split(X, y,\
-		random_state=1)
-	model = linear_model.LinearRegression()
-	model.fit(X_train, y_train)
-	print('Coefficients: {}'.format(model.coef_))
-	print("Residual sum of squares: {}".format(\
-	np.mean((model.predict(X_test) - y_test) ** 2)))
-	print('Variance score: {}'.format(model.score(X_test, y_test)))
+  model = linear_model.LinearRegression()
+  model.fit(X, y)
+  print('Coefficients: {}'.format(model.coef_))
+  print("Residual sum of squares: {}".format(\
+  np.mean((model.predict(X) - y) ** 2)))
+  print('Variance score: {}'.format(model.score(X, y)))
+  return model
 
-# Standardizing Data 
-def standardize(X):
-	for i in X:
-		X = (i - np.mean(X))/np.std(X)
-		return X
-
-# PCA
-
-# data = diabetes.data
-# def pca(data):
-#     X = StandardScaler().fit_transform(data)
-#     pca = PCA()
-#     pca.fit(X)
-#     pca.explained_variance_ratio_
-#     X_transform = pca.transform(X)
-#     return X_transform, pca
-
+# PCA Plot
 def scree_plot(pca, title=None):
     num_components = pca.n_components_
     ind = np.arange(num_components)
@@ -72,50 +56,84 @@ def scree_plot(pca, title=None):
     if title is not None:
         plt.title(title, fontsize=16)
 
-def ridge(X_transform, y):
-  dummy_arr = []
-  for i,a in enumerate(alphas):
-    fit = Ridge(alpha=a, normalize=True).fit(X_transform, y)
-    params[i] = fit.coef_
-    dummy_arr.append(((fit.predict(X_transform) - y)**2)\
-      .mean())
-  for param in params.T:
-    plt.plot(alphas, param)
-    plt.show()
+def ridge(X, y, alphas):
+  scores = []
+  for alpha in alphas:
+    model = Ridge(alpha=alpha, normalize=True)
+    fit = model.fit(X, y)
+    scores.append(cross_val_score(model, X, y))
+  a = alphas[np.argmax(scores)]
+  model = Ridge(alpha=a)
+  model.fit(X, y)
+  return model
 
-def lasso(X_transform, y):
-  alphas, _, coefs = linear_model.lars_path(X, y,\
-    method='lasso', verbose=True)
+def lasso(X, y, alphas):
+  scores = []
+  for alpha in alphas:
+    model = Lasso(alpha=alpha, normalize=True)
+    fit = model.fit(X, y)
+    scores.append(cross_val_score(model, X, y))
+  a = alphas[np.argmax(scores)]
+  model = Lasso(alpha=a)
+  model.fit(X, y)
+  return model
+
+def random_forest(X_train, y_train, num_trees=10):
+  model = RandomForestRegressor(n_estimators=num_trees,\
+    oob_score=True)
+  model.fit(X_transform, y)
+  return model
+
+def gradient(X_train, y_train):
+  model = GradientBoostingRegressor()
+  model.fit(X_transform, y)
+  return model
 
 
 if __name__=='__main__':
+
   diabetes = datasets.load_diabetes()
   X = diabetes['data']
   y = diabetes['target']
 
-  linear_regression(X, y)
-  # X = standardize(X)
+  X_train, X_test, y_train, y_test = train_test_split(X, y,\
+  random_state=1, test_size=.1)
 
-  X = preprocessing.StandardScaler().fit_transform(diabetes.data)
+  OLS = linear_regression(X_train, y_train)
+  OLS_perf = mse(y_test, OLS.predict(X_test))
+
+  standardizer = preprocessing.StandardScaler().fit(X_train)
+  X_train = standardizer.transform(X_train)
+  X_test = standardizer.transform(X_test)
   pca = PCA()
-  pca.fit(X)
+  pca.fit(X_train)
   pca.explained_variance_ratio_
 
   scree_plot(pca)
-  # plt.show()
-  X_transform = pca.transform(X)
-  # linear_regression(X_transform, y)
+  X_transform = pca.transform(X_train)
+  X_transform_test = pca.transform(X_test)
 
-  k = X_transform.shape[1]
-  alphas = np.logspace(-5, 5)
-  params = np.zeros((len(alphas), k))
-  train_MSE = np.zeros((len(alphas)))
-  test_MSE = np.zeros((len(alphas)))
+  PCR = linear_regression(X_transform, y_train) # different coefs, same MSE
+  PCR_perf = mse(y_test, PCR.predict(X_transform_test))
 
-  ridge(X_transform, y)
-  # fit.score(X_transform, y)
-  plt.plot(np.log10(alphas), train_MSE, color = 'b', label = "Training Ridge Set")
+  alphas = np.logspace(-2, 2)
+  ridge_model = ridge(X_train, y_train, alphas)
+  lasso_model = lasso(X_train, y_train, alphas)
 
+  ridge_perf = mse(y_test, ridge_model.predict(X_test))
+  lasso_per = mse(y_test, lasso_model.predict(X_test))
 
-# Standardizing right? Or should I do a function?
-# Do I use X_train/y_train in PCA/ridge/lasso?
+  # rf_model = random_forest(X_train, y_train)
+  # gradient_model = gradient(X_train, y_train)
+
+  # rf_perf = mse(X_test, rf_mdoel.predict(X_test))
+  # gradient_model = mse(X_test, gradient_model.predict(X_test))
+
+  # models, labels = [], []
+  # models.append(linear_regression(X_transform, y))
+  # labels.append('Linear Regression')
+  # models.append(ridge(X_transform, y, alphas))
+  # labels.append('Ridge Regression')
+  # models.append(lasso(X_transform, y, alphas))
+  # labels.append('Lasoo Regression')
+
