@@ -4,7 +4,7 @@ import numpy as np
 import seaborn as sns
 from sklearn.cross_validation import train_test_split,\
 cross_val_score
-from functions.py import *
+from functions import *
 from sklearn import datasets, linear_model
 from sklearn import preprocessing
 from sklearn.decomposition import PCA
@@ -29,28 +29,22 @@ def histogram(df, column_list, bins=10):
 	df[column_list].hist(bins=bins)
 	plt.show()
 
-
-#correlation matrix, heat maps
-#skewed distribution (histograms):loop for columns to do subplots
-	#df.hist() (look at pandas)
-
 if __name__=='__main__':
 
-	df = pd.read_csv('data/ratio_sizing_data_and_user_profiles.csv')
+	df = pd.read_csv('data/ratio_sizing_data.csv')
 	drop_columns = ['created_at', 'updated_at', 'source', 'birthday_month',\
 	'posture', 'watch_wrist', 'watch_size', 'rise_inches', 'pocket_size',\
-	'lastorderdate', 'shoulder_left', 'shoulder_right']
+	'lastorderdate', 'shoulder_left', 'shoulder_right', 'shoulder_slope',\
+	'estimated_birth_year', 'button_count', 'button_stance']
 	df.drop(drop_columns, axis=1, inplace=True)
 
 	df = dummies(df, 'build')
-	df = dummies(df, 'shoulder_slope')
 	df = dummies(df, 'back_pleats')
 	df = dummies(df, 'sleeve_fit')
 	df = dummies(df, 'tuck')
 	df = dummies(df, 'fit')
-	drop_dummies = ['Average', 'Normal', 'Standard', 'No Pleats', 'Both'\
-	'Traditional']
-	df.drop('drop_dummies', inplace=True, axis=1)
+	drop_dummies = ['Average', 'Standard', 'No Pleats', 'Both', 'Traditional']
+	df.drop(drop_dummies, inplace=True, axis=1)
 
 	# df.describe()
 	df = df[df['height_inches']<100.0]
@@ -58,15 +52,4 @@ if __name__=='__main__':
 
 	column_list = ['height_inches', 'age_years', 'weight_pounds']
 	histogram(df, column_list, bins=50)
-	# df.hist(column='height_inches', bins=50)
-	# df.hist(column='age_years')
-	# df.hist(column='weight_pounds', bins=50)
-	# df.hist(column='jacket_size')
-
-	y = df.pop('jacket_size')
-	X = df
-	X_train, X_test, y_train, y_test = train_test_split(X, y,\
-	random_state=1, test_size=.1)
-
-
 
