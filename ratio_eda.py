@@ -18,7 +18,7 @@ def dummies(df, column_list):
 def plot_corr(df):
 	sns.heatmap(df.corr())
 	plt.title('Correlation Plot')
-	plt.xticks(rotation=70)
+	plt.xticks(rotation=90)
 	plt.yticks(rotation=0)
 	plt.show()
 
@@ -29,19 +29,15 @@ def histogram(df, column_list, bins=10):
 if __name__=='__main__':
 
 	df = pd.read_csv('data/ratio_sizing_data.csv')
-	drop_columns = ['created_at', 'updated_at', 'source', 'birthday_month',\
-	'posture', 'watch_wrist', 'watch_size', 'rise_inches', 'pocket_size',\
-	'lastorderdate', 'shoulder_left', 'shoulder_right', 'shoulder_slope',\
-	'estimated_birth_year', 'button_count', 'button_stance', 'posture_alteration',\
-	'lastorderid']
+	drop_columns = ['created_at', 'updated_at', 'source', 'birthday_month', 'posture', 'watch_wrist', 'watch_size', 'rise_inches', 'pocket_size','lastorderdate', 'shoulder_left', 'shoulder_right', 'shoulder_slope', 'estimated_birth_year', 'button_count', 'button_stance', 'posture_alteration', 'lastorderid', 'back_pleats']
 	df.drop(drop_columns, axis=1, inplace=True)
 
 	df = dummies(df, 'build')
-	df = dummies(df, 'back_pleats')
+	# df = dummies(df, 'back_pleats') df.drop('No Pleats')
 	df = dummies(df, 'sleeve_fit')
 	df = dummies(df, 'tuck')
 	df = dummies(df, 'fit')
-	drop_dummies = ['Average','No Pleats',  'Standard', 'Both', 'Traditional']
+	drop_dummies = ['Average', 'Standard', 'Both', 'Traditional']
 	df.drop(drop_dummies, inplace=True, axis=1)
 
 	df.to_csv('data/cleaned_ratio_data')
@@ -50,4 +46,5 @@ if __name__=='__main__':
 
 	column_list = ['height_inches', 'age_years', 'weight_pounds']
 	histogram(df, column_list, bins=50)
+
 
