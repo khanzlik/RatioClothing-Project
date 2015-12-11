@@ -15,6 +15,19 @@ def dummies(df, column_list):
 	df.drop(column_list, inplace=True, axis=1)
 	return df
 
+def fill_nans(df, columns):
+	for column in columns:
+		if column == 'build':
+			df['build'].fillna('Average', inplace=True)
+		elif column == 'jacket_length':
+			df['jacket_length'].fillna(0, inplace=True)
+		elif column == 'tuck':
+			df['tuck'].fillna('Both', inplace=True)
+		elif column == 'fit':
+			df['fit'].fillna('Slim', inplace=True)
+	return df
+
+
 def plot_corr(df):
 	sns.heatmap(df.corr())
 	plt.title('Correlation Plot')
@@ -32,8 +45,10 @@ if __name__=='__main__':
 	drop_columns = ['created_at', 'updated_at', 'source', 'birthday_month', 'posture', 'watch_wrist', 'watch_size', 'rise_inches', 'pocket_size','lastorderdate', 'shoulder_left', 'shoulder_right', 'shoulder_slope', 'estimated_birth_year', 'button_count', 'button_stance', 'posture_alteration', 'lastorderid', 'back_pleats']
 	df.drop(drop_columns, axis=1, inplace=True)
 
+	fill_columns = ['build', 'jacket_length', 'tuck', 'fit']
+	df = fill_nans(df, fill_columns)
+
 	df = dummies(df, 'build')
-	# df = dummies(df, 'back_pleats') df.drop('No Pleats')
 	df = dummies(df, 'sleeve_fit')
 	df = dummies(df, 'tuck')
 	df = dummies(df, 'fit')
