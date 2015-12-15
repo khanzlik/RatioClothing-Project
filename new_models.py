@@ -24,7 +24,7 @@ def load_clean_data(file_loc, target=None):
 def make_model(file_loc, target):
 	df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, target)
 	linear = linear_model.LinearRegression()
-	return linear_regression(linear, X_train, y_train, y_test, X_test), ridge_lasso('ridge', X_train, y_train, y_test, X_test), ridge_lasso('lasso', X_train, y_train, y_test, X_test), random_forest(X_train, y_train, y_test, X_test), gradient(X_train, y_train, y_test, X_test)
+	return linear_regression(linear, X_train, y_train, y_test, X_test),  ridge_lasso('ridge', X_train, y_train, y_test, X_test), ridge_lasso('lasso', X_train, y_train, y_test, X_test), random_forest(X_train, y_train, y_test, X_test), gradient(X_train, y_train, y_test, X_test)
 
 def linear_regression(model, features, target, y_test, X_test):
 	model.fit(features, target)
@@ -63,84 +63,69 @@ def gradient(X_train, y_train, y_test, X_test):
 	r2 = model.score(X_test, y_test)
 	return (mean_squared_error, r2)
 
-def plot_feature_importance(model, columns, max_col=10):
+def plot_feature_importance(file_loc, target, model, max_col=10):
+	df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, target)
+	columns = list(df.columns)
+	if model == 'random_forest':
+		model = RandomForestRegressor(n_estimators=100, oob_score=True)
+	elif model == 'gradient':
+		model = GradientBoostingRegressor(learning_rate = 0.05)
+	model.fit(X_train, y_train)
 	result = pd.Series(model.feature_importances_, index=columns).sort_values(ascending=False)
 	if max_col:
 		result = result[:max_col]
 	result.plot(kind='bar')
-	plt.title('Feature Importances:  {}'.format(model.__class__.__name__))
+	plt.title('Feature Importances: {}, {}'.format(model.__class__.__name__, target))
 	plt.show()
+
+def grid_search(file_loc, target):
+	df = pd.read_csv(file_loc)
+	df = df.fillna(-1)
+	y = df.pop(target)
+	X = df
+	params = {'learning_rate': [0.05, 0.1, 0.15], 'n_estimators': [50, 100, 200], 'max_features': [None, 'auto']}
+	search = GridSearchCV(GradientBoostingRegressor(), params, n_jobs = -1)
+	return search.fit(X, y)
+
+def print_table(file_loc, target):
+	models = ['linear', 'ridge', 'lasso', 'random forest', 'gradient']
+	ratio_eval, ridge_eval, lasso_eval, rf, gb = make_model(file_loc, target)
+	mses = [ratio_eval[0], ridge_eval[0], lasso_eval[0], rf[0], gb[0]]
+	r2s = [ratio_eval[1], ridge_eval[1], lasso_eval[1], rf[1], gb[1]]
+	print 'Model\t\t|\tMSE\t\t|\tR2'
+	for i, model in enumerate(models):
+		if len(model) > 7:
+			print '{0}\t|\t{1:.4f}\t\t|\t{2:.4f}'.format(model, mses[i], r2s[i])
+		else:
+			print '{0}\t\t|\t{1:.4f}\t\t|\t{2:.4f}'.format(model, mses[i], r2s[i])
+
 
 if __name__ == '__main__':
 
 	file_loc = 'data/cleaned_ratio_data'
 
 	ratio_eval_neck, ridge_eval_neck, lasso_eval_neck, rf_neck, gb_neck = make_model(file_loc, 'neck')
+	# plot_feature_importance(file_loc, 'neck', 'random_forest')
+	# plot_feature_importance(file_loc, 'neck', 'gradient')
+	search = grid_search(file_loc, 'neck')
+	# different best params for each target value
+	print_table(file_loc, 'neck')
 
 	ratio_eval_sleeve, ridge_eval_sleeve, lasso_eval_sleeve, rf_sleeve, gb_sleeve = make_model(file_loc, 'sleeve')
+	# results.append(ratio_eval_sleeve, ridge_eval_sleeve, lasso_eval_sleeve, rf_sleeve, gb_sleeve)
+	# plot_feature_importance(file_loc, 'sleeve', 'random_forest')
+	# plot_feature_importance(file_loc, 'sleeve', 'gradient')
 
 	ratio_eval_chest, ridge_eval_chest, lasso_eval_chest, rf_chest, gb_chest = make_model(file_loc, 'chest')
+	# results.append(ratio_eval_chest, ridge_eval_chest, lasso_eval_chest, rf_chest, gb_chest)
+	# plot_feature_importance(file_loc, 'chest', 'random_forest')
+	# plot_feature_importance(file_loc, 'chest', 'gradient')
 
-	ratio_eval_chest, ridge_eval_chest, lasso_eval_chest, rf_chest, gb_chest = make_model(file_loc, 'waist')
+	ratio_eval_waist, ridge_eval_waist, lasso_eval_waist, rf_waist, gb_waist = make_model(file_loc, 'waist')
+	# results.append(ratio_eval_chest, ridge_eval_chest, lasso_eval_chest, rf_chest, gb_chest)
+	# plot_feature_importance(file_loc, 'waist', 'random_forest')
+	# plot_feature_importance(file_loc, 'waist', 'gradient')
 
 
-	'''
-	Neck
-	'''
-	# df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, 'neck')
-	# columns = list(df.columns)
-	# # Linear Regresion: mse =  0.31885454402716518, r2 = 0.77279074986611529
-	# linear = linear_model.LinearRegression()
-	# ratio_eval_neck = linear_regression(linear, X_train, y_train, y_test, X_test)
-	# # Ridge: mse =  0.328163151931468; r2 = 0.76615762557372069
-	# alphas = np.logspace(-3, 1)
-	# ridge = RidgeCV(alphas=alphas)
-	# ridge_eval_neck = ridge_lasso(ridge, X_train, y_train, y_test, X_test)
-	# # Lasso: mse = 0.32470144401621842; r2 = 0.76862436808794798
-	# lasso = LassoCV()
-	# lasso_eval_neck = ridge_lasso(lasso, X_train, y_train, y_test, X_test)
-	# # Random Forrest: mse = 0.18862087264150951, r2 = 0.92705939013792449
-	# rf_neck = random_forest(X_train, y_train, y_test, X_test)
-	# forest = RandomForestRegressor(n_estimators=100, oob_score=True)
-	# forest.fit(X_train, y_train)
-	# plot_feature_importance(forest, columns)
-	# # Gradient Boosting: mse 0.13569632383074304; r2 0.94752557085732669
-	# gb_neck = gradient(X_train, y_train, y_test, X_test)
-	# gb = GradientBoostingRegressor()
-	# gb.fit(X_train, y_train)
-	# plot_feature_importance(gb, columns)
-	# '''
-	# Sleeve
-	# '''
-	# df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, 'sleeve')
-
-	# linear = linear_model.LinearRegression()
-	# ratio_eval_sleeve = linear_regression(linear, X_train, y_train, y_test, X_test)
-	# ridge_eval_sleeve = ridge_lasso(ridge, X_train, y_train, y_test, X_test)
-	# lasso_eval_sleeve = ridge_lasso(lasso, X_train, y_train, y_test, X_test)
-	# rf_neck = random_forest(X_train, y_train, y_test, X_test)
-	# gb_neck = gradient(X_train, y_train, y_test, X_test)
-	# '''
-	# Chest
-	# '''
-	# df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, 'chest')
-
-	# linear = linear_model.LinearRegression()
-	# ratio_eval_chest = linear_regression(linear, X_train, y_train, y_test, X_test)
-	# ridge_eval_chest = ridge_lasso(ridge, X_train, y_train, y_test, X_test)
-	# lasso_eval_chest = ridge_lasso(lasso, X_train, y_train, y_test, X_test)
-	# rf_chest = random_forest(X_train, y_train, y_test, X_test)
-	# gb_chest = gradient(X_train, y_train, y_test, X_test)
-	# '''
-	# Waist
-	# '''
-	# df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, 'waist')
-
-	# linear = linear_model.LinearRegression()
-	# ratio_eval_waist = linear_regression(linear, X_train, y_train, y_test, X_test)
-	# ridge_eval_waist = ridge_lasso(ridge, X_train, y_train, y_test, X_test)
-	# lasso_eval_waist = ridge_lasso(lasso, X_train, y_train, y_test, X_test)
-	# rf_waist = random_forest(X_train, y_train, y_test, X_test)
-	# gb_waist = gradient(X_train, y_train, y_test, X_test)
 
 
