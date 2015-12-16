@@ -62,6 +62,7 @@ if __name__=='__main__':
 
 	df_duplicates.to_csv('data/repeat_orders')
 	file_loc = 'data/repeat_orders'
+	drop_columns = ['created_at', 'updated_at', 'source', 'birthday_month', 'posture', 'watch_wrist', 'watch_size', 'rise_inches', 'pocket_size','lastorderdate', 'shoulder_left', 'shoulder_right', 'shoulder_slope', 'estimated_birth_year', 'button_count', 'button_stance', 'posture_alteration', 'lastorderid', 'back_pleats']
 	df = clean_data(file_loc)
 	df.to_csv('data/cleaned_ratio_data')
 
@@ -73,15 +74,19 @@ if __name__=='__main__':
 	Retention
 	'''
 	total_orders.to_csv('data/total_orders')
-	file_loc_retention = 'data/total_orders'
-	df_retention = clean_data(file_loc_retention)
-	df.to_csv('data/cleaned_total_orders')
+	num_shirt = pd.DataFrame(total_orders.groupby('user_id').size())
+	num_shirt.rename(columns={0: 'retention'}, inplace=True)
+	num_shirt.reset_index(inplace=True)
+	retention = pd.merge(total_orders, num_shirt, 'inner', 'user_id')
+	retention.eval('churn = retention <= 1')
+	retention.churn = retention.churn.astype(int)
+	drop_columns = ['id_y', 'id_x', 'retention']
+	retention.drop(drop_columns, axis=1, inplace=True)
+	retention.drop_duplicates('user_id', inplace=True)
+	retention.to_csv('data/churn')
+	
+	file_loc_churn = 'data/churn'
+	df_retention = clean_data(file_loc_churn)
+	df_retention.to_csv('data/cleaned_churn')
 
-def retained(total_orders, index):
-	for row in total_orders:
-		if row in df_duplicates:
-			df_retention['retained'] = 1
-		else:
-			df_retention['retained'] = 0
-	return df_retention
 
