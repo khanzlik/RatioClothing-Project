@@ -20,6 +20,11 @@ def load_clean_data(file_loc, columns=None, target=None):
 	else:
 		return df
 
+def make_model(file_loc, target, columns):
+	df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, columns, target)
+	linear = linear_model.LinearRegression()
+	return model_evaluation(linear, X_train, y_train, y_test, X_test),  ridge_lasso('ridge', X_train, y_train, y_test, X_test), ridge_lasso('lasso', X_train, y_train, y_test, X_test)
+
 def model_evaluation(model, features, target, y_test, X_test):
 	model.fit(features, target)
 	intercept = model.intercept_
@@ -28,7 +33,7 @@ def model_evaluation(model, features, target, y_test, X_test):
 		prediction = model.predict(X_test)
 		mean_squared_error = mse(y_test, model.predict(X_test))
 		r2 = model.score(X_test, y_test)
-		return coef, prediction, mean_squared_error, r2
+		return mean_squared_error, r2
 	else:
 		return coef
 
@@ -36,10 +41,27 @@ def ridge_lasso(model, X_train, y_train, y_test, X_test):
 	standardizer = preprocessing.StandardScaler().fit(X_train)
   	X_train = standardizer.transform(X_train)
   	X_test = standardizer.transform(X_test)
-  	if model == ridge:
-  		return model_evaluation(ridge, X_train, y_train, y_test, X_test)
-  	elif model == lasso:
-  		return model_evaluation(lasso, X_train, y_train, y_test, X_test)
+  	if model == 'ridge':
+		alphas = np.logspace(-3, 1)
+		ridge = RidgeCV(alphas=alphas)
+		return model_evaluation(ridge, X_train, y_train, y_test, X_test)
+  	elif model == 'lasso':
+		lasso = LassoCV()
+		return model_evaluation(lasso, X_train, y_train, y_test, X_test)
+
+def print_table(file_loc, model_scores, target_name):
+	models = ['linear', 'ridge', 'lasso']
+	mses = []
+	r2s = []
+	for i in model_scores:
+		mses.append(i[0])
+		r2s.append(i[1])
+	print '{} Model\t|\tMSE\t\t|\tR2'.format(target_name)
+	for i, model in enumerate(models):
+		if len(model) > 7:
+			print '{0}\t|\t{1:.4f}\t\t|\t{2:.4f}'.format(model, mses[i], r2s[i])
+		else:
+			print '{0}\t\t|\t{1:.4f}\t\t|\t{2:.4f}'.format(model, mses[i], r2s[i])
 
 if __name__ == '__main__':
 
@@ -48,77 +70,51 @@ if __name__ == '__main__':
 	'''
 	Neck
 	'''
-	columns = ['t_shirt_size', 'height_inches', 'weight_pounds', 'neck']
-	df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, columns, 'neck')
+	columns_neck = ['t_shirt_size', 'height_inches', 'weight_pounds', 'neck']
 
-	linear = linear_model.LinearRegression()
-	ratio_eval_neck = model_evaluation(linear, X_train, y_train, y_test, X_test)
-	# mse =  0.47750327483826049; r2 = 0.67984086429868151 
-
-  	alphas = np.logspace(-3, 1)
-	ridge = RidgeCV(alphas=alphas)
-	ridge_eval_neck = ridge_lasso(ridge, X_train, y_train, y_test, X_test)
-	# mse = 0.47721527750811232; r2 = 0.68003396240117264
-	lasso = LassoCV()
-	lasso_eval_neck = ridge_lasso(lasso, X_train, y_train, y_test, X_test)
-	# mse = 0.47722398030101915; r2 = 0.6800281273026465
+	ratio_eval_neck, ridge_eval_neck, lasso_eval_neck = make_model(file_loc, 'neck', columns_neck)
+	model_scores_neck = [ratio_eval_neck, ridge_eval_neck, lasso_eval_neck]
+	print_table(file_loc, model_scores_neck, 'Neck')
 
 	'''
 	Sleeve
 	'''
-	columns = ['t_shirt_size', 'height_inches', 'weight_pounds', 'Fit',
+	columns_sleeve = ['t_shirt_size', 'height_inches', 'weight_pounds', 'Fit',
 	'Full', 'Muscular', 'jacket_size', 'jacket_length', 'pant_inseam_inches', 'sleeve']	
-	df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, columns, 'sleeve')
 
-	ratio_eval_sleeve = model_evaluation(linear, X_train, y_train, y_test, X_test)
-	# mse = 0.39771933086395506; r2 = 0.83666254075411528
-	ridge_eval_sleeve = ridge_lasso(ridge, X_train, y_train, y_test, X_test)
-	# mse = 0.40528999341433258; r2 = 0.83355338138009027
-	lasso_eval_sleeve = ridge_lasso(lasso, X_train, y_train, y_test, X_test)
-	# mse = 0.39687011534069044; r2 = 0.83701130103594745
+	ratio_eval_sleeve, ridge_eval_sleeve, lasso_eval_sleeve = make_model(file_loc, 'sleeve', columns_sleeve)
+	model_scores_sleeve = [ratio_eval_sleeve, ridge_eval_sleeve, lasso_eval_sleeve]
+	print_table(file_loc, model_scores_sleeve, 'Sleeve')
 
-	columns = ['t_shirt_size', 'height_inches', 'weight_pounds', 'shirt_sleeve_inches']
-	df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, columns, 'shirt_sleeve_inches')
-	ratio_eval_sleeve2 = model_evaluation(linear, X_train, y_train, y_test, X_test)
-	# mse = 1.1247710512623568; r2 = 0.71683849830813262
+	columns_sleeve2 = ['t_shirt_size', 'height_inches', 'weight_pounds', 'shirt_sleeve_inches', 'sleeve']
 
-	ridge_eval_sleeve2 = ridge_lasso(ridge, X_train, y_train, y_test, X_test)
-	# mse = 1.1267313982382454; r2 = 0.71634498027803506
-	lasso_eval_sleeve2 = ridge_lasso(lasso, X_train, y_train, y_test, X_test)
-	# mse = 1.1251534027213046; r2 = 0.71674224119592456
+	ratio_eval_sleeve2, ridge_eval_sleeve2, lasso_eval_sleeve2 = make_model(file_loc, 'sleeve', columns_sleeve2)
+	model_scores_sleeve2 = [ratio_eval_sleeve2, ridge_eval_sleeve2, lasso_eval_sleeve2]
+	print_table(file_loc, model_scores_sleeve2, 'Sleeve 2')
 
 	'''
 	Chest
 	'''
-	columns = ['jacket_size', 'Slim', 'Very Slim', 'chest']
-	df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, columns, 'chest')
-	ratio_eval_chest = model_evaluation(linear, X_train, y_train, y_test, X_test)
-	# mse =  0.54706151455779206; r2 = 0.86078110314750333
+	columns_chest = ['jacket_size', 'Slim', 'Very Slim', 'chest']
 
-  	ridge_eval_chest = ridge_lasso(ridge, X_train, y_train, y_test, X_test)
-  	# mse = 4.2048059326703857; r2 = 0.18922634965511664
-	lasso_eval_chest = ridge_lasso(lasso, X_train, y_train, y_test, X_test)
-	# mse =  4.2097740338073146; r2 = 0.18826839688427088
+	ratio_eval_chest, ridge_eval_chest, lasso_eval_chest = make_model(file_loc, 'chest', columns_chest)
 
-	columns = ['t_shirt_size', 'height_inches', 'weight_pounds', 'age_years', 'Fit', 'Full', 'Muscular', 'Slim', 'Very Slim', 'chest']
-	df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, columns, 'chest')
-	ratio_eval_chest2 = model_evaluation(linear, X_train, y_train, y_test, X_test)
-	# mse =  0.76175726435387658; r2 = 0.84407444361854078
+	model_scores_chest = [ratio_eval_chest, ridge_eval_chest, lasso_eval_chest]
+	print_table(file_loc, model_scores_chest, 'Chest')
 
-	ridge_eval_chest2 = ridge_lasso(ridge, X_train, y_train, y_test, X_test)
-	# mse =  0.76465039887538788; r2 = 0.84348224236091873
-	lasso_eval_chest2 = ridge_lasso(lasso, X_train, y_train, y_test, X_test)
-	# mse =  0.77741931289295585 r2 = 0.84086854884495987
+	columns_chest2 = ['t_shirt_size', 'height_inches', 'weight_pounds', 'age_years', 'Fit', 'Full', 'Muscular', 'Slim', 'Very Slim', 'chest']
+
+	ratio_eval_chest2, ridge_eval_chest2, lasso_eval_chest2 = make_model(file_loc, 'chest', columns_chest2)
+
+	model_scores_chest2 = [ratio_eval_chest2, ridge_eval_chest2, lasso_eval_chest2]
+	print_table(file_loc, model_scores_chest2, 'Chest 2')
 
 	'''
 	Waist
 	'''
-	columns = ['Fit', 'Full', 'Muscular', 'waist']
-	df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, columns, 'waist')
-	ratio_eval_waist = model_evaluation(linear, X_train, y_train, y_test, X_test)
-	# mse = 4.2104438126990829; r2 = 0.18813924964520723
+	columns_waist = ['Fit', 'Full', 'Muscular', 'waist']
 
-	ridge_eval_chest = ridge_lasso(ridge, X_train, y_train, y_test, X_test)
-	# mse =  4.2048059326703857; r2 = 0.18922634965511664
-	lasso_eval_chest = ridge_lasso(lasso, X_train, y_train, y_test, X_test)
-	# mse = 4.2097740338073146; r2 = 0.18826839688427088
+	ratio_eval_waist, ridge_eval_waist, lasso_eval_waist = make_model(file_loc, 'waist', columns_waist)
+
+	model_scores_waist = [ratio_eval_waist, ridge_eval_waist, lasso_eval_waist]
+	print_table(file_loc, model_scores_waist, 'Waist')
