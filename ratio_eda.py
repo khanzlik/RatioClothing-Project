@@ -77,3 +77,11 @@ if __name__=='__main__':
 	df_retention = clean_data(file_loc_retention)
 	df.to_csv('data/cleaned_total_orders')
 
+def retained(total_orders, index):
+	for row in total_orders:
+		if row in df_duplicates:
+			df_retention['retained'] = 1
+		else:
+			df_retention['retained'] = 0
+	return df_retention
+
