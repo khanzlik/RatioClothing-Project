@@ -80,11 +80,14 @@ def descriptions(df):
 	return df.describe(), hist
 
 def plot_corr(df):
+	plt.clf()
+	drop_columns = ['Unnamed: 0', 'id_x', 'id_y', 'armpit_inches', 'torso_length_inches', 'leg_length_inches', 'knee_inches', 'arm_left_inches', 'arm_right_inches', 'thigh_inches']
+	df.drop(drop_columns, inplace=True, axis=1)
 	sns.heatmap(df.corr())
 	plt.title('Correlation Plot')
 	plt.xticks(rotation=90)
 	plt.yticks(rotation=0)
-	plt.show()
+	plt.savefig('images/heat_map.png', dpi=300)
 
 def histogram(df, column_list, bins=10):
 	df[column_list].hist(bins=bins)
