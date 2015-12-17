@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
-def make_ratio_df():
-	id_userid = pd.read_csv('data/id_userid.csv')
-	ids = pd.read_csv('data/id.csv')
-	ratio = pd.read_csv('data/ratio_sizing_data.csv')
+def make_ratio_df(file_id_userid, file_id, file_sizing_data):
+	id_userid = pd.read_csv(file_id_userid)
+	ids = pd.read_csv(file_id)
+	ratio = pd.read_csv(file_sizing_data)
 
 	orders  = pd.merge(id_userid, ids, 'left', 'id')
 	total_orders = pd.merge(orders, ratio, 'inner', 'user_id')
@@ -92,7 +92,11 @@ def histogram(df, column_list, bins=10):
 
 if __name__=='__main__':
 
-	total_orders, df = make_ratio_df()
+	file_id_userid = 'data/id_userid.csv'
+	file_id = 'data/id.csv'	
+	file_sizing_data = 'data/ratio_sizing_data.csv'
+
+	total_orders, df = make_ratio_df(file_id_userid, file_id, file_sizing_data)
 
 	make_retention_df(total_orders)
 
