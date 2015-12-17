@@ -8,6 +8,10 @@ from sklearn.metrics import mean_squared_error as mse
 from sklearn import preprocessing
 from sklearn.linear_model import RidgeCV, LassoCV
 
+'''
+I wrote this model as a pythonic represenation of the Excel model Ratio Clothing provided me with. The Ratio algorithm used a subset of the features (based on what features the customer supplied) to try and predict the customer's shirt size. My file 'new_models.py' provides the model I created to replace the model shown here.
+'''
+
 def load_clean_data(file_loc, columns=None, target=None):
 	df = pd.read_csv(file_loc)
 	if columns is not None and target is not None:
@@ -49,72 +53,46 @@ def ridge_lasso(model, X_train, y_train, y_test, X_test):
 		lasso = LassoCV()
 		return model_evaluation(lasso, X_train, y_train, y_test, X_test)
 
-def print_table(file_loc, model_scores, target_name):
+def return_table(file_loc, target_name, target, columns):
+	ratio_eval, ridge_eval, lasso_eval = make_model(file_loc, target, columns)
+	model_scores = [ratio_eval, ridge_eval, lasso_eval ]
 	models = ['linear', 'ridge', 'lasso']
 	mses = []
 	r2s = []
 	for i in model_scores:
 		mses.append(i[0])
 		r2s.append(i[1])
-	print '{} Model\t|\tMSE\t\t|\tR2'.format(target_name)
+	result = '{} Model\t|\tMSE\t\t|\tR2\n'.format(target_name)
 	for i, model in enumerate(models):
 		if len(model) > 7:
-			print '{0}\t|\t{1:.4f}\t\t|\t{2:.4f}'.format(model, mses[i], r2s[i])
+			result += '{0}\t|\t{1:.4f}\t\t|\t{2:.4f}\n'.format(model, mses[i], r2s[i])
 		else:
-			print '{0}\t\t|\t{1:.4f}\t\t|\t{2:.4f}'.format(model, mses[i], r2s[i])
+			result += '{0}\t\t|\t{1:.4f}\t\t|\t{2:.4f}\n'.format(model, mses[i], r2s[i])
+	return result
 
 if __name__ == '__main__':
 
 	file_loc = 'data/cleaned_ratio_data'
 
-	'''
-	Neck
-	'''
 	columns_neck = ['t_shirt_size', 'height_inches', 'weight_pounds', 'neck']
+	neck_table = return_table(file_loc, 'Neck', 'neck', columns_neck)
 
-	ratio_eval_neck, ridge_eval_neck, lasso_eval_neck = make_model(file_loc, 'neck', columns_neck)
-	model_scores_neck = [ratio_eval_neck, ridge_eval_neck, lasso_eval_neck]
-	print_table(file_loc, model_scores_neck, 'Neck')
 
-	'''
-	Sleeve
-	'''
 	columns_sleeve = ['t_shirt_size', 'height_inches', 'weight_pounds', 'Fit',
 	'Full', 'Muscular', 'jacket_size', 'jacket_length', 'pant_inseam_inches', 'sleeve']	
-
-	ratio_eval_sleeve, ridge_eval_sleeve, lasso_eval_sleeve = make_model(file_loc, 'sleeve', columns_sleeve)
-	model_scores_sleeve = [ratio_eval_sleeve, ridge_eval_sleeve, lasso_eval_sleeve]
-	print_table(file_loc, model_scores_sleeve, 'Sleeve')
+	sleeve_table = return_table(file_loc, 'Sleeve', 'sleeve', columns_sleeve)
 
 	columns_sleeve2 = ['t_shirt_size', 'height_inches', 'weight_pounds', 'shirt_sleeve_inches', 'sleeve']
+	sleeve_table2 = return_table(file_loc, 'Sleeve 2', 'sleeve', columns_sleeve2)
 
-	ratio_eval_sleeve2, ridge_eval_sleeve2, lasso_eval_sleeve2 = make_model(file_loc, 'sleeve', columns_sleeve2)
-	model_scores_sleeve2 = [ratio_eval_sleeve2, ridge_eval_sleeve2, lasso_eval_sleeve2]
-	print_table(file_loc, model_scores_sleeve2, 'Sleeve 2')
 
-	'''
-	Chest
-	'''
 	columns_chest = ['jacket_size', 'Slim', 'Very Slim', 'chest']
-
-	ratio_eval_chest, ridge_eval_chest, lasso_eval_chest = make_model(file_loc, 'chest', columns_chest)
-
-	model_scores_chest = [ratio_eval_chest, ridge_eval_chest, lasso_eval_chest]
-	print_table(file_loc, model_scores_chest, 'Chest')
+	chest_table = return_table(file_loc, 'Chest', 'chest', columns_chest)
 
 	columns_chest2 = ['t_shirt_size', 'height_inches', 'weight_pounds', 'age_years', 'Fit', 'Full', 'Muscular', 'Slim', 'Very Slim', 'chest']
+	chest_table2 = return_table(file_loc, 'Chest 2', 'chest', columns_chest2)
 
-	ratio_eval_chest2, ridge_eval_chest2, lasso_eval_chest2 = make_model(file_loc, 'chest', columns_chest2)
 
-	model_scores_chest2 = [ratio_eval_chest2, ridge_eval_chest2, lasso_eval_chest2]
-	print_table(file_loc, model_scores_chest2, 'Chest 2')
-
-	'''
-	Waist
-	'''
 	columns_waist = ['Fit', 'Full', 'Muscular', 'waist']
+	waist_table = return_table(file_loc, 'Waist', 'waist', columns_waist)
 
-	ratio_eval_waist, ridge_eval_waist, lasso_eval_waist = make_model(file_loc, 'waist', columns_waist)
-
-	model_scores_waist = [ratio_eval_waist, ridge_eval_waist, lasso_eval_waist]
-	print_table(file_loc, model_scores_waist, 'Waist')
