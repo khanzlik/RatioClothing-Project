@@ -8,7 +8,7 @@ from sklearn.metrics import roc_curve
 
 def load_clean_data(file_loc, target):
 	df = pd.read_csv(file_loc)
-	drop_columns = ['Unnamed: 0', 'Unnamed: 0.1']
+	drop_columns = ['Unnamed: 0', 'Unnamed: 0.1', 'user_id']
 	df.drop(drop_columns, axis=1, inplace=True)
 	df = df.fillna(-1)
 	y = df.pop(target)
@@ -16,12 +16,12 @@ def load_clean_data(file_loc, target):
 	X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1)
 	return df, X, y, X_train, X_test, y_train, y_test
 
-def logistic(X, y):
+def logistic_model(X, y):
 	model = linear_model.LogisticRegression()
 	model.fit(X, y)
 	return model
 
-def random_forest(X, y, num_trees=10):
+def andom_forest(X, y, num_trees=10):
 	model = RandomForestClassifier(n_estimators=num_trees, oob_score=True)
 	model.fit(X, y)
 	return model
@@ -31,7 +31,18 @@ def gradient(X, y):
 	model.fit(X, y)
 	return model
 
-def plot_roc_curve(y_true, predictions, labels):
+def models_labels(X_train, y_train):
+	models, labels = [], []
+	models.append(logistic(X_train, y_train))
+	labels.append('Logistic Regression')
+	models.append(random_forest(X_train, y_train, 100))
+	labels.append('Random Forest')
+	models.append(gradient(X_train, y_train))
+	labels.append('Gradient Boosting')
+	predictions = [model.predict_proba(X_test)[:,1] for model in models]
+	return models, labels, predictions
+
+def plot_roc_curve(y_test, predictions, labels):
 	for y_predic, label in zip(predictions, labels):
 		fpr, tpr, thresholds = roc_curve(y_true, y_predic)
 		plt.plot(fpr, tpr, label=label)
@@ -41,24 +52,18 @@ def plot_roc_curve(y_true, predictions, labels):
 	plt.legend(loc="best")
 	plt.show()
 
+def feature_importance(df, model, X, y):
+	model.fit(X, y)
+	columns = df.columns
+	feature_importance = pd.Series(model.feature_importances_, index=columns).sort_values(ascending=False)
+	return feature_importance
+
 if __name__ == '__main__':
 
 	file_loc = 'data/cleaned_churn'
 	df, X, y, X_train, X_test, y_train, y_test = load_clean_data(file_loc, 'churn')
 
-	models, labels = [], []
-	models.append(logistic(X_train, y_train))
-	labels.append('Logistic Regression')
-	models.append(random_forest(X_train, y_train, 100))
-	labels.append('Random Forest')
-	models.append(gradient(X_train, y_train))
-	labels.append('Gradient Boosting')
-
-	predictions = [model.predict_proba(X_test)[:,1] for model in models]
-	#plot_roc_curve(y_test, predictions, labels)
-
+	# Chose model based on ROC curve
 	model = RandomForestClassifier(n_estimators=100, oob_score=True)
-	model.fit(X, y)
-	columns = df.columns
-	feature_import = result = pd.Series(model.feature_importances_, index=columns).sort_values(ascending=False)
+	feat_importances = feature_importance(df, model, X, y)
 
