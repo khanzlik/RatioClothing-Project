@@ -109,18 +109,7 @@ if __name__ == '__main__':
 	file_loc = 'data/cleaned_ratio_data'
 
 	neck_eval = return_table(file_loc, 'neck')
-	# neck_rf_feat = plot_feature_importance(file_loc, 'neck', 'random_forest')
-	# neck_gb_feat = plot_feature_importance(file_loc, 'neck', 'gradient')
-
 	sleeve_eval = return_table(file_loc, 'sleeve')
-	# sleeve_rf_feat = plot_feature_importance(file_loc, 'sleeve', 'random_forest')
-	# sleeve_gb_feat = plot_feature_importance(file_loc, 'sleeve', 'gradient')
-
 	chest_eval = return_table(file_loc, 'chest')
-	# chest_rf_feat = plot_feature_importance(file_loc, 'chest', 'random_forest')
-	# chest_gb_feat = plot_feature_importance(file_loc, 'chest', 'gradient')
-
 	waist_eval = return_table(file_loc, 'waist')
-	# waist_rf_feat = plot_feature_importance(file_loc, 'waist', 'random_forest')
-	# waist_gb_feat = plot_feature_importance(file_loc, 'waist', 'gradient')
 
