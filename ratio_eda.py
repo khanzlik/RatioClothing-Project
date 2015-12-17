@@ -73,6 +73,12 @@ def fill_nans(df, columns):
 			df['fit'].fillna('Slim', inplace=True)
 	return df
 
+def descriptions(df):
+	df.describe()
+	column_list = ['height_inches', 'age_years', 'weight_pounds']
+	hist = histogram(df, column_list, bins=50)
+	return df.describe(), hist
+
 def plot_corr(df):
 	sns.heatmap(df.corr())
 	plt.title('Correlation Plot')
@@ -87,9 +93,6 @@ def histogram(df, column_list, bins=10):
 if __name__=='__main__':
 
 	total_orders, df = make_ratio_df()
-	df.describe()
-	column_list = ['height_inches', 'age_years', 'weight_pounds']
-	histogram(df, column_list, bins=50)
 
 	make_retention_df(total_orders)
 
