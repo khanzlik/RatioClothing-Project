@@ -77,21 +77,16 @@ if __name__ == '__main__':
 	columns_neck = ['t_shirt_size', 'height_inches', 'weight_pounds', 'neck']
 	neck_table = return_table(file_loc, 'Neck', 'neck', columns_neck)
 
-
 	columns_sleeve = ['t_shirt_size', 'height_inches', 'weight_pounds', 'Fit',
 	'Full', 'Muscular', 'jacket_size', 'jacket_length', 'pant_inseam_inches', 'sleeve']	
 	sleeve_table = return_table(file_loc, 'Sleeve', 'sleeve', columns_sleeve)
-
 	columns_sleeve2 = ['t_shirt_size', 'height_inches', 'weight_pounds', 'shirt_sleeve_inches', 'sleeve']
 	sleeve_table2 = return_table(file_loc, 'Sleeve 2', 'sleeve', columns_sleeve2)
 
-
 	columns_chest = ['jacket_size', 'Slim', 'Very Slim', 'chest']
 	chest_table = return_table(file_loc, 'Chest', 'chest', columns_chest)
-
 	columns_chest2 = ['t_shirt_size', 'height_inches', 'weight_pounds', 'age_years', 'Fit', 'Full', 'Muscular', 'Slim', 'Very Slim', 'chest']
 	chest_table2 = return_table(file_loc, 'Chest 2', 'chest', columns_chest2)
-
 
 	columns_waist = ['Fit', 'Full', 'Muscular', 'waist']
 	waist_table = return_table(file_loc, 'Waist', 'waist', columns_waist)
