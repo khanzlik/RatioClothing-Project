@@ -1,0 +1,71 @@
+<form action='/predictions' methods='POST'>
+  <div class="Logo Large">
+  <h1 align="center">Ratio Clothing Predictor</h1>
+  <br>
+  Height (inches):
+  <input type="text" name="height_inches" required>
+  <br>
+  Weight (pounds):
+  <input type="text" name="weight_pounds" required>
+  <br>
+  Age:
+  <input type="text" name="age_years" required>
+  <br>
+  Jacket Size:
+  <input type="text" name="jacket_size">
+  <br>
+  Jacket Length:
+  <input type="text" name="jacket_length">
+  <br>
+  Neck:
+  <input type="text" name="shirt_neck_inches">
+  <br>
+  Sleeve:
+  <input type="text" name="shirt_sleeve_inches">
+  <br>
+  Waist:
+  <input type="text" name="pant_waist_inches">
+  <br>
+  Inseam Length:
+  <input type="text" name="pant_inseam_inches">
+  <br>
+  <fieldset>
+    <legend>T Shirt Size:</legend>
+    <input type="radio" name="t_shirt_size" value='1'>XS
+    <br>
+    <input type="radio" name="t_shirt_size" value='2'>
+    <br>
+    <input type="radio" name="t_shirt_size" value='3'>S
+    <br>
+    <input type="radio" name="t_shirt_size" value='4'>
+    <br>
+    <input type="radio" name="t_shirt_size" value='5' checked>M
+    <br>
+    <input type="radio" name="t_shirt_size" value='6'>
+    <br>
+    <input type="radio" name="t_shirt_size" value='7'>L
+    <br>
+    <input type="radio" name="t_shirt_size" value='8'>
+    <br>
+    <input type="radio" name="t_shirt_size" value='9'>XL
+    <br>
+    <input type="radio" name="t_shirt_size" value='10'>
+    <br>
+    <input type="radio" name="t_shirt_size" value='11'>XXL
+  <br>
+  </fieldset>  
+  <fieldset>
+    <legend>Build:</legend>
+    <input type="radio" name="build" value="average" checked>Average
+    <br>
+    <input type="radio" name="build" value="full">Full
+    <br>
+    <input type="radio" name="build" value="fit">Fit
+    <br>
+    <input type="radio" name="build" value="muscular">Muscular
+  <br>
+</fieldset>
+<br>
+<input type="submit" value="Submit">
+<form action="action_page.php">
+</form>
