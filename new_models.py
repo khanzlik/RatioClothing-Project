@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import pickle 
 from sklearn import linear_model
 from sklearn.cross_validation import train_test_split
 from sklearn.metrics import mean_squared_error as mse
@@ -104,6 +105,15 @@ def return_table(file_loc, target):
 			result += '{0}\t\t|\t{1:.4f}\t\t|\t{2:.4f}\n'.format(model, mses[i], r2s[i])
 	return result
 
+def make_models(file_loc, model_info):
+	for shirt_part in model_info:
+		df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, shirt_part)
+		model = model_info[shirt_part]
+		model.fit(X_train, y_train)
+		with open('app/models/{}.pkl'.format(shirt_part), 'wb') as file:
+			pickle.dump(model, file)
+
+
 if __name__ == '__main__':
 
 	file_loc = 'data/cleaned_ratio_data'
@@ -112,4 +122,10 @@ if __name__ == '__main__':
 	sleeve_eval = return_table(file_loc, 'sleeve')
 	chest_eval = return_table(file_loc, 'chest')
 	waist_eval = return_table(file_loc, 'waist')
+
+
+	rfr = RandomForestRegressor(n_estimators=100, oob_score=True)
+	gbr = GradientBoostingRegressor(learning_rate=0.1, max_features='auto', n_estimators=200)
+	model_info = {'neck': rfr, 'sleeve': gbr, 'waist': rfr, 'chest': rfr}
+
 
