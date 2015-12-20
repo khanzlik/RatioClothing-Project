@@ -5,8 +5,8 @@ import seaborn as sns
 
 def make_ratio_df(file_id_userid, file_id, file_sizing_data):
 	'''
-	INPUT: path to csv files of userid's for id, orders, and sizing data
-	OUTPUT: new data frame of only repeated orders and the dataframe of the total orders
+	INPUT: path to csv files of userids for id, orders, and sizing data
+	OUTPUT: new data frame of only repeated orders and the new dataframe of the total orders
 	'''
 	id_userid = pd.read_csv(file_id_userid)
 	ids = pd.read_csv(file_id)
@@ -28,7 +28,7 @@ def make_ratio_df(file_id_userid, file_id, file_sizing_data):
 def make_retention_df(total_orders):
 	'''
 	INPUT: dataframe of total orders made
-	OUTPUT: dataframe with a churn column for if customers were retained
+	OUTPUT: dataframe with a churn column for if customers were purchased again
 	'''
 	total_orders.to_csv('data/total_orders')
 	num_shirt = pd.DataFrame(total_orders.groupby('user_id').size())
@@ -50,7 +50,7 @@ def make_retention_df(total_orders):
 def clean_data(file_loc):
 	'''
 	INPUT: path to file location
-	OUTPUT: dataframe with insignificant columns dropped, dummies, and filled in default values
+	OUTPUT: cleaned dataframe with columns dropped, dummy variables, and filled-in default values
 	'''
 	df = pd.read_csv(file_loc)
 	drop_columns = ['created_at', 'updated_at', 'source', 'birthday_month', 'posture', 'watch_wrist', 'watch_size', 'rise_inches', 'pocket_size','lastorderdate', 'shoulder_left', 'shoulder_right', 'shoulder_slope', 'estimated_birth_year', 'button_count', 'button_stance', 'posture_alteration', 'lastorderid', 'back_pleats']
