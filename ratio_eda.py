@@ -4,6 +4,10 @@ import numpy as np
 import seaborn as sns
 
 def make_ratio_df(file_id_userid, file_id, file_sizing_data):
+	'''
+	INPUT: csv files of userid's for id, orders, and sizing data
+	OUTPUT: new data frame of only repeated orders and the dataframe of the total orders
+	'''
 	id_userid = pd.read_csv(file_id_userid)
 	ids = pd.read_csv(file_id)
 	ratio = pd.read_csv(file_sizing_data)
@@ -22,6 +26,10 @@ def make_ratio_df(file_id_userid, file_id, file_sizing_data):
 	return total_orders, df
 
 def make_retention_df(total_orders):
+	'''
+	INPUT: dataframe of total orders made
+	OUTPUT: dataframe with a churn column for if customers were retained
+	'''
 	total_orders.to_csv('data/total_orders')
 	num_shirt = pd.DataFrame(total_orders.groupby('user_id').size())
 	num_shirt.rename(columns={0: 'retention'}, inplace=True)
@@ -40,6 +48,10 @@ def make_retention_df(total_orders):
 	return df_retention
 
 def clean_data(file_loc):
+	'''
+	INPUT: path to file location
+	OUTPUT: dataframe with insignificant columns dropped, dummies, and filled in default values
+	'''
 	df = pd.read_csv(file_loc)
 	drop_columns = ['created_at', 'updated_at', 'source', 'birthday_month', 'posture', 'watch_wrist', 'watch_size', 'rise_inches', 'pocket_size','lastorderdate', 'shoulder_left', 'shoulder_right', 'shoulder_slope', 'estimated_birth_year', 'button_count', 'button_stance', 'posture_alteration', 'lastorderid', 'back_pleats']
 	df.drop(drop_columns, axis=1, inplace=True)
@@ -80,6 +92,9 @@ def descriptions(df):
 	return df.describe(), hist
 
 def plot_corr(df):
+	'''
+	Heat map of correlations
+	'''
 	plt.clf()
 	drop_columns = ['Unnamed: 0', 'id_x', 'id_y', 'armpit_inches', 'torso_length_inches', 'leg_length_inches', 'knee_inches', 'arm_left_inches', 'arm_right_inches', 'thigh_inches']
 	df.drop(drop_columns, inplace=True, axis=1)
