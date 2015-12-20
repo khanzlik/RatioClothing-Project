@@ -13,6 +13,10 @@ I wrote this model as a pythonic represenation of the Excel model Ratio Clothing
 '''
 
 def load_clean_data(file_loc, columns=None, target=None):
+	'''
+	INPUT: path to file, column names as list of strings (input values), target value as string
+	OUTPUT: cleaned dataframe, train-test for X and y based on target specified
+	'''
 	df = pd.read_csv(file_loc)
 	if columns is not None and target is not None:
 		df = df[columns]
@@ -25,11 +29,14 @@ def load_clean_data(file_loc, columns=None, target=None):
 		return df
 
 def make_model(file_loc, target, columns):
+	'''
+	Function passes data frame and target variable to the 3 different linear models we are fitting and returns the MSE and r2 as a measure of performance
+	'''
 	df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, columns, target)
 	linear = linear_model.LinearRegression()
-	return model_evaluation(linear, X_train, y_train, y_test, X_test),  ridge_lasso('ridge', X_train, y_train, y_test, X_test), ridge_lasso('lasso', X_train, y_train, y_test, X_test)
+	return linear(linear, X_train, y_train, y_test, X_test),  ridge_lasso('ridge', X_train, y_train, y_test, X_test), ridge_lasso('lasso', X_train, y_train, y_test, X_test)
 
-def model_evaluation(model, features, target, y_test, X_test):
+def linear(model, features, target, y_test, X_test):
 	model.fit(features, target)
 	intercept = model.intercept_
 	coef = np.hstack([intercept, model.coef_])
@@ -48,12 +55,15 @@ def ridge_lasso(model, X_train, y_train, y_test, X_test):
   	if model == 'ridge':
 		alphas = np.logspace(-3, 1)
 		ridge = RidgeCV(alphas=alphas)
-		return model_evaluation(ridge, X_train, y_train, y_test, X_test)
+		return linear(ridge, X_train, y_train, y_test, X_test)
   	elif model == 'lasso':
 		lasso = LassoCV()
-		return model_evaluation(lasso, X_train, y_train, y_test, X_test)
+		return linear(lasso, X_train, y_train, y_test, X_test)
 
 def return_table(file_loc, target_name, target, columns):
+	'''
+	Makes a table of the MSE and r2 of all of the models for a given target
+	'''
 	ratio_eval, ridge_eval, lasso_eval = make_model(file_loc, target, columns)
 	model_scores = [ratio_eval, ridge_eval, lasso_eval ]
 	models = ['linear', 'ridge', 'lasso']
