@@ -5,7 +5,7 @@ import seaborn as sns
 
 def make_ratio_df(file_id_userid, file_id, file_sizing_data):
 	'''
-	INPUT: csv files of userid's for id, orders, and sizing data
+	INPUT: path to csv files of userid's for id, orders, and sizing data
 	OUTPUT: new data frame of only repeated orders and the dataframe of the total orders
 	'''
 	id_userid = pd.read_csv(file_id_userid)
