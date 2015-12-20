@@ -11,6 +11,10 @@ from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.grid_search import GridSearchCV
 
 def load_clean_data(file_loc, target=None):
+	'''
+	INPUT: path to file for dataframe, target value as string (dependent variable)
+	OUTPUT: cleaned dataframe, train-test for X and y based on target specified
+	'''
 	df = pd.read_csv(file_loc)
 	if target is not None:
 		df = df.fillna(-1)
@@ -22,6 +26,12 @@ def load_clean_data(file_loc, target=None):
 		return df
 
 def make_model(file_loc, target):
+	'''
+	INPUT: same path to file and target variable
+	OUTPUT: linear regression, ridge, lasso, random forest, and gradient boosting models (mean squared error and r2)
+
+	Function passes data frame and target variable to the 5 different models we are fitting and returns the MSE and r2 as a measure of performance
+	'''
 	df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, target)
 	linear = linear_model.LinearRegression()
 	return linear_regression(linear, X_train, y_train, y_test, X_test),  ridge_lasso('ridge', X_train, y_train, y_test, X_test), ridge_lasso('lasso', X_train, y_train, y_test, X_test), random_forest(X_train, y_train, y_test, X_test), gradient(X_train, y_train, y_test, X_test, file_loc, target)
@@ -56,6 +66,9 @@ def random_forest(X_train, y_train, y_test, X_test, num_trees=100):
 	return (mean_squared_error, r2)
 
 def gradient(X_train, y_train, y_test, X_test, file_loc, target):
+	'''
+	Passes to grid search function within this function to pick the best parameters for each gradient boosted model depending on the target variable we are trying to predict
+	'''
 	grid = grid_search(file_loc, target)
 	best_params = grid.best_params_
 	learn_rate = best_params['learning_rate']
@@ -69,6 +82,10 @@ def gradient(X_train, y_train, y_test, X_test, file_loc, target):
 	return (mean_squared_error, r2)
 
 def plot_feature_importance(file_loc, target, model, max_col=10):
+	'''
+	INPUT: path to location of df, target variable, model as string (either 'random_forest' or 'gradient'), and max columns set to 10 to show top 10 most important features
+	OUTPUT: plots the  most important features for the specified model
+	'''
 	df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, target)
 	columns = list(df.columns)
 	if model == 'random_forest':
@@ -84,6 +101,9 @@ def plot_feature_importance(file_loc, target, model, max_col=10):
 	plt.show()
 
 def grid_search(file_loc, target):
+	'''
+	Grid search for best paramaters for Gradient Boosted model
+	'''
 	df = pd.read_csv(file_loc)
 	df = df.fillna(-1)
 	y = df.pop(target)
@@ -93,6 +113,9 @@ def grid_search(file_loc, target):
 	return search.fit(X, y)
 
 def return_table(file_loc, target):
+	'''
+	Makes a table of the MSE and r2 of all of the models for a given target
+	'''
 	models = ['linear', 'ridge', 'lasso', 'random forest', 'gradient']
 	ratio_eval, ridge_eval, lasso_eval, rf, gb = make_model(file_loc, target)
 	mses = [ratio_eval[0], ridge_eval[0], lasso_eval[0], rf[0], gb[0]]
@@ -105,14 +128,17 @@ def return_table(file_loc, target):
 			result += '{0}\t\t|\t{1:.4f}\t\t|\t{2:.4f}\n'.format(model, mses[i], r2s[i])
 	return result
 
-def make_models(file_loc, model_info):
+def best_models(file_loc, model_info):
+	'''
+	INPUT: path to file, parameters of models as dictionary {'target': model}
+	OUTPUT: pickles models
+	'''
 	for shirt_part in model_info:
 		df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, shirt_part)
 		model = model_info[shirt_part]
 		model.fit(X_train, y_train)
 		with open('app/models/{}.pkl'.format(shirt_part), 'wb') as file:
 			pickle.dump(model, file)
-
 
 if __name__ == '__main__':
 
@@ -122,10 +148,4 @@ if __name__ == '__main__':
 	sleeve_eval = return_table(file_loc, 'sleeve')
 	chest_eval = return_table(file_loc, 'chest')
 	waist_eval = return_table(file_loc, 'waist')
-
-
-	rfr = RandomForestRegressor(n_estimators=100, oob_score=True)
-	gbr = GradientBoostingRegressor(learning_rate=0.1, max_features='auto', n_estimators=200)
-	model_info = {'neck': rfr, 'sleeve': gbr, 'waist': rfr, 'chest': rfr}
-
 
