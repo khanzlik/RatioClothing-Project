@@ -27,10 +27,10 @@ def load_clean_data(file_loc, target=None):
 
 def make_model(file_loc, target):
 	'''
-	INPUT: same path to file and target variable
-	OUTPUT: linear regression, ridge, lasso, random forest, and gradient boosting models (mean squared error and r2)
+	INPUT:  path to file and  target variable
+	OUTPUT: linear regression, ridge, lasso, random forest, and gradient boosting models (mean squared error and r2) for the target variable
 
-	Function passes data frame and target variable to the 5 different models we are fitting and returns the MSE and r2 as a measure of performance
+	Function passes data frame and target variable train-test to the 5 different models we are fitting and returns the MSE and r2 as a measure of performance
 	'''
 	df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, target)
 	linear = linear_model.LinearRegression()
@@ -133,8 +133,26 @@ def best_models(file_loc, model_info):
 	INPUT: path to file, parameters of models as dictionary {'target': model}
 	OUTPUT: pickles models
 	'''
+	df = pd.read_csv(file_loc)
+	drop_columns = ['Unnamed: 0', 'Unnamed: 0.1', 'id_x', 'user_id', 'id_y', 'neck_inches', 'shoulder_inches', 'chest_inches', 'overarm_inches', 'thigh_inches', 'belly_inches', 'bicep_inches', 'waist_inches', 'wrist_inches', 'seat_inches', 'armpit_inches', 'torso_length_inches', 'leg_length_inches', 'knee_inches', 'center_back_arm_left_inches', 'center_back_arm_right_inches', 'arm_left_inches', 'arm_right_inches', 'seat', 'yoke', 'length', 'bicep', 'cuff', 'asym_cuff', 'asym_sleeve', 'forearm_alteration', 'short_sleeve_length', 'short_sleeve_opening', 'Fit', 'Full', 'Muscular', 'Slim', 'Fitted', 'Tucked', 'Untucked', 'Slim.1', 'Very Slim']
+	df.drop(drop_columns, axis=1, inplace=True)
 	for shirt_part in model_info:
-		df, X_train, X_test, y_train, y_test = load_clean_data(file_loc, shirt_part)
+		if shirt_part == 'neck':
+			drop_columns = ['sleeve', 'chest', 'waist']
+			df_copy = df.drop(drop_columns, axis=1)
+		elif shirt_part == 'chest':
+			drop_columns = ['neck', 'waist', 'sleeve']
+			df_copy = df.drop(drop_columns, axis=1)
+		elif shirt_part == 'waist':
+			drop_columns = ['neck', 'chest', 'sleeve']
+			df_copy = df.drop(drop_columns, axis=1)
+		else:
+			drop_columns = ['neck', 'chest', 'waist']
+			df_copy = df.drop(drop_columns, axis=1)
+		df_copy = df_copy.fillna(-1)
+		y = df_copy.pop(shirt_part).values 
+		X = df_copy.values
+		X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1, test_size=.1)
 		model = model_info[shirt_part]
 		model.fit(X_train, y_train)
 		with open('app/models/{}.pkl'.format(shirt_part), 'wb') as file:
