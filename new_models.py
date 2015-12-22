@@ -131,10 +131,10 @@ def return_table(file_loc, target):
 def best_models(file_loc, model_info):
 	'''
 	INPUT: path to file, parameters of models as dictionary {'target': model}
-	OUTPUT: pickles models
+	OUTPUT: pickled models
 	'''
 	df = pd.read_csv(file_loc)
-	drop_columns = ['Unnamed: 0', 'Unnamed: 0.1', 'id_x', 'user_id', 'id_y', 'neck_inches', 'shoulder_inches', 'chest_inches', 'overarm_inches', 'thigh_inches', 'belly_inches', 'bicep_inches', 'waist_inches', 'wrist_inches', 'seat_inches', 'armpit_inches', 'torso_length_inches', 'leg_length_inches', 'knee_inches', 'center_back_arm_left_inches', 'center_back_arm_right_inches', 'arm_left_inches', 'arm_right_inches', 'seat', 'yoke', 'length', 'bicep', 'cuff', 'asym_cuff', 'asym_sleeve', 'forearm_alteration', 'short_sleeve_length', 'short_sleeve_opening', 'Fit', 'Full', 'Muscular', 'Slim', 'Fitted', 'Tucked', 'Untucked', 'Slim.1', 'Very Slim']
+	drop_columns = ['Unnamed: 0', 'Unnamed: 0.1', 'id_x', 'user_id', 'id_y', 'neck_inches', 'shoulder_inches', 'chest_inches', 'overarm_inches', 'thigh_inches', 'belly_inches', 'bicep_inches', 'waist_inches', 'wrist_inches', 'seat_inches', 'armpit_inches', 'torso_length_inches', 'leg_length_inches', 'knee_inches', 'center_back_arm_left_inches', 'center_back_arm_right_inches', 'arm_left_inches', 'arm_right_inches', 'seat', 'yoke', 'length', 'bicep', 'cuff', 'asym_cuff', 'asym_sleeve', 'forearm_alteration', 'short_sleeve_length', 'short_sleeve_opening', 'Slim', 'Fitted', 'Tucked', 'Untucked', 'Slim.1', 'Very Slim']
 	df.drop(drop_columns, axis=1, inplace=True)
 	for shirt_part in model_info:
 		if shirt_part == 'neck':
