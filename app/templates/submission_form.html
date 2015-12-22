@@ -1,7 +1,7 @@
 <form action='/predictions' method='POST'>
-  <div class="Logo Large">
   <h1 align="center">Ratio Clothing Predictor</h1>
   <br>
+  <body>
   Height (inches):
   <input type="number" name="height_inches" required>
   <br>
@@ -56,16 +56,17 @@
   </fieldset>  
   <fieldset>
     <legend>Build:</legend>
-    <input type="radio" name="build" value="average" checked>Average
+    <input type="radio" name="build" value="0" checked>Average
     <br>
-    <input type="radio" name="build" value="full">Full
+    <input type="radio" name="build" value="1">Fit
     <br>
-    <input type="radio" name="build" value="fit">Fit
+    <input type="radio" name="build" value="2">Full
     <br>
-    <input type="radio" name="build" value="muscular">Muscular
+    <input type="radio" name="build" value="3">Muscular
   <br>
 </fieldset>
 <br>
 <input type="submit" value="Submit">
+</body>
 <form action="action_page.php">
 </form>
