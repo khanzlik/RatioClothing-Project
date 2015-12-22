@@ -1,72 +1,81 @@
-<form action='/predictions' method='POST'>
-  <h1 align="center">Ratio Clothing Predictor</h1>
-  <br>
-  <body>
-  Height (inches):
-  <input type="number" name="height_inches" required>
-  <br>
-  Weight (pounds):
-  <input type="number" name="weight_pounds" required>
-  <br>
-  Age:
-  <input type="number" name="age_years" required>
-  <br>
-  Jacket Size:
-  <input type="number" name="jacket_size" value="-1">
-  <br>
-  Jacket Length:
-  <input type="number" name="jacket_length" value="-1">
-  <br>
-  Neck:
-  <input type="number" name="shirt_neck_inches" value="-1">
-  <br>
-  Sleeve:
-  <input type="number" name="shirt_sleeve_inches" value="-1">
-  <br>
-  Waist:
-  <input type="number" name="pant_waist_inches" value="-1">
-  <br>
-  Inseam Length:
-  <input type="number" name="pant_inseam_inches" value="-1">
-  <br>
-  <fieldset>
-    <legend>T Shirt Size:</legend>
-    <input type="radio" name="t_shirt_size" value='1'>XS
+{% extends "base.html" %}
+{% block body %}
+  <form action='/predictions' method='POST'>
+    <div class="jumbotron_bg"> 
+      <div class="jumbotron">
+        <h1 align="center">Ratio Clothing Predictor</h1>
+        <br>
+      </div>
+    </div>
+      <body>
+      Height (inches):
+      <input type="number" name="height_inches" required>
+      <br>
+      Weight (pounds):
+      <input type="number" name="weight_pounds" required>
+      <br>
+      Age:
+      <input type="number" name="age_years" required>
+      <br>
+      Jacket Size:
+      <input type="number" name="jacket_size" value="-1">
+      <br>
+      Jacket Length:
+      <input type="number" name="jacket_length" value="-1">
+      <br>
+      Neck:
+      <input type="number" name="shirt_neck_inches" value="-1">
+      <br>
+      Sleeve:
+      <input type="number" name="shirt_sleeve_inches" value="-1">
+      <br>
+      Waist:
+      <input type="number" name="pant_waist_inches" value="-1">
+      <br>
+      Inseam Length:
+      <input type="number" name="pant_inseam_inches" value="-1">
+      <br>
+      <br>
+      <fieldset>
+        <legend>T Shirt Size:</legend>
+        <input type="radio" name="t_shirt_size" value='1'> XS
+        <br>
+        <input type="radio" name="t_shirt_size" value='2'>
+        <br>
+        <input type="radio" name="t_shirt_size" value='3'> S
+        <br>
+        <input type="radio" name="t_shirt_size" value='4'>
+        <br>
+        <input type="radio" name="t_shirt_size" value='5' checked> M
+        <br>
+        <input type="radio" name="t_shirt_size" value='6'>
+        <br>
+        <input type="radio" name="t_shirt_size" value='7'> L
+        <br>
+        <input type="radio" name="t_shirt_size" value='8'>
+        <br>
+        <input type="radio" name="t_shirt_size" value='9'> XL
+        <br>
+        <input type="radio" name="t_shirt_size" value='10'>
+        <br>
+        <input type="radio" name="t_shirt_size" value='11'> XXL
+      <br>  
+      <br>
+      </fieldset>  
+      <fieldset>
+        <legend>Build:</legend>
+        <input type="radio" name="build" value="0" checked> Average
+        <br>
+        <input type="radio" name="build" value="1"> Fit
+        <br>
+        <input type="radio" name="build" value="2"> Full
+        <br>
+        <input type="radio" name="build" value="3"> Muscular
+      <br>
+    </fieldset>
     <br>
-    <input type="radio" name="t_shirt_size" value='2'>
-    <br>
-    <input type="radio" name="t_shirt_size" value='3'>S
-    <br>
-    <input type="radio" name="t_shirt_size" value='4'>
-    <br>
-    <input type="radio" name="t_shirt_size" value='5' checked>M
-    <br>
-    <input type="radio" name="t_shirt_size" value='6'>
-    <br>
-    <input type="radio" name="t_shirt_size" value='7'>L
-    <br>
-    <input type="radio" name="t_shirt_size" value='8'>
-    <br>
-    <input type="radio" name="t_shirt_size" value='9'>XL
-    <br>
-    <input type="radio" name="t_shirt_size" value='10'>
-    <br>
-    <input type="radio" name="t_shirt_size" value='11'>XXL
-  <br>
-  </fieldset>  
-  <fieldset>
-    <legend>Build:</legend>
-    <input type="radio" name="build" value="0" checked>Average
-    <br>
-    <input type="radio" name="build" value="1">Fit
-    <br>
-    <input type="radio" name="build" value="2">Full
-    <br>
-    <input type="radio" name="build" value="3">Muscular
-  <br>
-</fieldset>
-<br>
-<input type="submit" value="Submit">
-</body>
-<form action="action_page.php">
-</form>
+    <input type="submit" value="Submit">
+    </body>
+    <form action="action_page.php">
+    </form>
+{% endblock %}
