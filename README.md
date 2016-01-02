@@ -1,2 +1,6 @@
 # RatioClothing-Project
-My work for my Galvanize capstone project where I helped a local clothing company optimize its algorithm to make the perfect fitting shirt.
+This project shows the work I did for a local menswear clothing company, Ratio Clothing, to improve their current model for predicting shirt sizes. Ratio’s business model focuses on crafting the perfect fitting, custom dress shirt without the need for a tailor. To do this, they use the customer’s survey answers and correlated measurements. Through machine learning techniques, I helped optimize Ratio’s model by reducing the error of their estimates to allow them to make more accurate predictions. 
+
+The model Ratio supplied me with used coefficients from a linear regression and a subset of the customer's survey responses to predict shirt measurements. 
+
+While reworking Ratio's model, I concentrated on neck, sleeve, chest, and waist measurements. After incroporating all of the provided customer responses with machine learning techniques, I saw drastic improvements in the mean squeared error and variance explained. For example, I saw the MSE decrease to 0.0309, from a previous 0.4775, and the variance explained increase to 0.9785, from a 0.6798, for the neck random forest model. I saw similar improvements across all 4 measurements, with either random forest or gradient boosting as the best performing model. 
