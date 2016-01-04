@@ -1,0 +1,11 @@
+
+* {
+	border: 1px dashed blue;
+}
+
+#content {
+	height: 600px;
+	width: 1080px;
+	background-image: url(http//i.imgur.com/QbjvZ16.jpg);
+	background-size: 100% 100%;
+}
