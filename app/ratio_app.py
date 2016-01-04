@@ -39,7 +39,8 @@ def shirt_predictions():
 	sleeve = 'Sleeve: {} '.format(str(round(predictions[1], 2)))
 	chest = 'Chest: {} '.format(str(round(predictions[2], 2)))
 	waist = 'Waist: {} '.format(str(round(predictions[3], 2)))
-	return neck+sleeve+chest+waist
+	preds = [neck, sleeve, chest, waist]
+	return render_template('results.html', preds=preds)
 
 def load_pickle_obs(file_paths):
     objs = []
@@ -47,6 +48,7 @@ def load_pickle_obs(file_paths):
         with open(file_path, 'r') as f:
             objs.append(pickle.load(f))
     return tuple(objs)
+
 
 if __name__ == '__main__':
  	app.run(host='0.0.0.0', port=8080, debug=True)
