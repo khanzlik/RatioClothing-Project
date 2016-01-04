@@ -1,1 +1,14 @@
-<h1 align="center">Shirt Blueprint</h1>
+{% extends "base.html" %}
+{% block body %}
+<div id="content">
+  <h2 align="left">Shirt Blueprint</h2>
+  <br>
+   {% for pred in preds %}
+   <div class="board_container">
+       <div class="board well">
+       <h3> {{ pred }} </h3>
+       </div>
+   </div>
+   {% endfor %}
+</div>
+{% endblock %}

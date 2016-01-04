@@ -6,10 +6,33 @@
     <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="http://getbootstrap.com/examples/jumbotron/jumbotron.css" rel="stylesheet">
     <link href="../static/app.css" rel="stylesheet">
+    <link href="rat.css" rel="stylesheet" type="text/css">
 </head>
  
-<body>
+<body background="http://i.imgur.com/QbjvZ16.jpg?1">
     <div class="container">
+        <div class="header">
+            <nav class="navbar navbar-default navbar-fixed-top">
+                <ul class="nav nav-pills navbar-left">
+                    <li role="presentation" 
+                        {% if request.path == '/' %} class="active" {% endif %}>
+                        <a href="/">Home</a>
+                    </li>
+                    <li role="presentation" 
+                        {% if request.path == '/predictions' %} class="active" {% endif %}>
+                        <a href="results.html">Results</a>
+                    </li>
+                    <li role="presentation" 
+                        {% if request.path == '/shop' %} class="active" {% endif %}>
+                        <a href="https://www.ratioclothing.com/t/dress-shirts">Shop </a>
+                     <li role="presentation" 
+                        {% if request.path == '/about' %} class="active" {% endif %}>
+                        <a href="https://www.ratioclothing.com/about/company">About</a>
+                    </li>
+                    </li>
+                </ul>
+            </nav>
+        </div>
 
         {% block body %} {% endblock %}
 

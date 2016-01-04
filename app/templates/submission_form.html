@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 {% block body %}
+  <div id="content">
   <form action='/predictions' method='POST'>
-    <div class="jumbotron_bg"> 
-      <div class="jumbotron">
-        <h1 align="center">Ratio Clothing Predictor</h1>
-        <br>
+    <div class="page-header"> 
+      <div class="page-header">
+        <h2 align="left">Welcome To Our Predictor!</h2>
+        <h4 align="left">Please enter your measurements below:</h4>
       </div>
     </div>
       <body>
@@ -78,4 +79,5 @@
     </body>
     <form action="action_page.php">
     </form>
+  </div>
 {% endblock %}
