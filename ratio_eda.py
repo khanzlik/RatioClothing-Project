@@ -96,9 +96,9 @@ def plot_corr(df):
 	Heat map of correlations
 	'''
 	plt.clf()
-	drop_columns = ['Unnamed: 0', 'id_x', 'id_y', 'armpit_inches', 'torso_length_inches', 'leg_length_inches', 'knee_inches', 'arm_left_inches', 'arm_right_inches', 'thigh_inches']
-	df.drop(drop_columns, inplace=True, axis=1)
-	sns.heatmap(df.corr())
+	drop_columns = ['Unnamed: 0', 'id_x', 'id_y', 'armpit_inches', 'torso_length_inches', 'leg_length_inches', 'knee_inches', 'arm_left_inches', 'arm_right_inches', 'thigh_inches', 'user_id', 'forearm_alteration', 'short_sleeve_opening', 'cuff', 'bicep', 'yoke', 'seat', 'arm_left_inches', 'arm_right_inches', 'Slim', 'Very Slim', 'Untucked', 'Tucked', 'Fitted', 'Slim', 'Muscular', 'Full', 'Fit', 'asym_cuff', 'asym_sleeve', 'center_back_arm_right_inches', 'center_back_arm_left_inches', 'overarm_inches', 'pant_inseam_inches', 'short_sleeve_length', 'neck', 'sleeve', 'chest', 'waist', 'length', 'jacket_length', 'shoulder_inches', 'height_inches', 'age_years', 'shirt_sleeve_inches']
+	#cmap = sns.palplot(sns.color_palette("Blues"))
+	sns.heatmap(df.drop(drop_columns, axis=1).corr(), cmap='YlOrRd')
 	plt.title('Correlation Plot')
 	plt.xticks(rotation=90)
 	plt.yticks(rotation=0)
